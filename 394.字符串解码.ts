@@ -7,10 +7,25 @@
 // @lc code=start
 function decodeString(s: string): string {
   const numStack: number[] = [];
-  const stack: string[] = [];
-  let i = 0;
-  while (i < s.length) {
-    if(s[i])
+  const strStack: string[] = [];
+  let num = 0;
+  let result = "";
+  for(const char of s){
+    // @ts-ignore
+    if(!isNaN(char)){
+      num = num * 10 + Number(char);
+    }else if( char == "["){
+      strStack.push(result);
+      result = "";
+      numStack.push(num);
+      num = 0;
+    }else if(char == "]"){
+      const repeatTime = numStack.pop() as number;
+      result = strStack.pop() + result.repeat(repeatTime); 
+    }else {
+      result += char;
+    }
   }
+  return result;
 }
 // @lc code=end
