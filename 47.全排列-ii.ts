@@ -37,27 +37,52 @@
 //   return ans;
 // }
 
-function permuteUnique(nums: number[]): number[][] {
-  // dfs + map
-  const res: number[][] = [];
-  nums.sort((a, b) => a - b);
-  const track = (path: number[], used: boolean[]) => {
-    if (path.length == nums.length) return res.push([...path]);
-    for (let i = 0; i < nums.length; i++) {
-      if (used[i]) continue;
+// function permuteUnique(nums: number[]): number[][] {
+//   // dfs + map
+//   const res: number[][] = [];
+//   nums.sort((a, b) => a - b);
+//   const track = (path: number[], used: boolean[]) => {
+//     if (path.length == nums.length) return res.push([...path]);
+//     for (let i = 0; i < nums.length; i++) {
+//       if (used[i]) continue;
 
-      // 这里要注意[1,1,2]中2个1调换顺序后，会出现两种情况，所以要避免；
-      // 如何避免呢？
-      if (i < nums.length - 1 && nums[i] == nums[i + 1] && used[i + 1])
-        continue;
-      used[i] = true;
-      path.push(nums[i]);
-      track(path, used);
-      path.pop();
-      used[i] = false;
+//       // 这里要注意[1,1,2]中2个1调换顺序后，会出现两种情况，所以要避免；
+//       // 如何避免呢？
+//       if (i < nums.length - 1 && nums[i] == nums[i + 1] && used[i + 1])
+//         continue;
+//       used[i] = true;
+//       path.push(nums[i]);
+//       track(path, used);
+//       path.pop();
+//       used[i] = false;
+//     }
+//   };
+//   track([], []);
+//   return res;
+// }
+function permuteUnique(nums: number[]): number[][] {
+  // 回溯
+  const ans = [] as number[][];
+  const len = nums.length;
+  const map = {};// 去重
+  const backtrack = (track:number[],used:boolean[])=>{
+    if(track.length == len){
+      if(map[track.join("-")])return;
+      map[track.join("-")] = 1;
+      ans.push([...track]);
+      return;
     }
-  };
-  track([], []);
-  return res;
+    for(let i = 0; i < len; i++){
+      // 特殊情况：[1,1,2]有两个答案，需要去重，因此需要map
+      if(used[i])continue;
+      track.push(nums[i]);
+      used[i] = true;
+      backtrack(track,used);
+      used[i] = false;
+      track.pop();
+    }
+  }
+  backtrack([],[])
+  return ans;
 }
 // @lc code=end
